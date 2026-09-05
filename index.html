@@ -426,8 +426,8 @@ textarea:focus,input:focus,select:focus{border-color:rgba(56,189,248,0.5)}
 <!-- HEADER -->
 <header>
   <div class="hdr-left">
-    <h1>🚀 班級榮譽星際能量艙</h1>
-    <p>凝聚全班卓越・100% 共享福利・期末拍賣大集合</p>
+    <h1 id="appTitle">🚀 班級榮譽星際能量艙</h1>
+    <p id="appSubtitle">凝聚全班卓越・100% 共享福利・期末拍賣大集合</p>
   </div>
   <div class="hdr-right">
     <div class="mode-pill" id="modePill">
@@ -548,8 +548,16 @@ textarea:focus,input:focus,select:focus{border-color:rgba(56,189,248,0.5)}
         <button class="tab-btn" data-t="t-backup">備份匯出</button>
       </div>
 
-      <!-- 扣點機制 -->
+      <!-- 扣點機制與基本設定 -->
       <div class="tab-panel on" id="t-mode">
+        <div class="fg">
+          <label>班級輪盤主標題（可自訂班級名稱）：</label>
+          <input type="text" id="appTitleI" placeholder="例：🚀 六年三班榮譽星際能量艙">
+        </div>
+        <div class="fg">
+          <label>輪盤副標題：</label>
+          <input type="text" id="appSubtitleI" placeholder="例：凝聚全班卓越・100% 共享福利・期末拍賣大集合">
+        </div>
         <div class="fg">
           <label>啟動機制：</label>
           <select id="modeSelect">
@@ -566,7 +574,7 @@ textarea:focus,input:focus,select:focus{border-color:rgba(56,189,248,0.5)}
           <label style="margin-top:8px">當前大撲滿存額：</label>
           <input type="number" id="vaultPtsI" min="0" max="9999" value="0">
         </div>
-        <button class="btn-action" id="saveModeBtn">儲存機制設定</button>
+        <button class="btn-action" id="saveModeBtn">儲存設定</button>
       </div>
 
       <!-- 學生名冊 -->
@@ -704,6 +712,16 @@ let cells = _isNewFormat ? _rawCells : shuffle(DEFAULT_CELLS);
 if (!_isNewFormat) { localStorage.removeItem('hm_cells'); }
 let history   = JSON.parse(localStorage.getItem('hm_history'))  || [];
 let adminPw   = localStorage.getItem('hm_pw') || '8888';
+let appTitle  = localStorage.getItem('hm_app_title') || '🚀 班級榮譽星際能量艙';
+let appSubtitle = localStorage.getItem('hm_app_subtitle') || '凝聚全班卓越・100% 共享福利・期末拍賣大集合';
+
+function renderHeaderTitle(){
+  const h1 = document.getElementById('appTitle');
+  const p = document.getElementById('appSubtitle');
+  if(h1) h1.textContent = appTitle;
+  if(p) p.textContent = appSubtitle;
+  document.title = appTitle;
+}
 
 /* ── 外圈座標 ── */
 const COORDS=[];
@@ -1063,6 +1081,8 @@ function openModal(tab='t-mode'){
   modal.style.display='flex';
   switchTab(tab);
 
+  document.getElementById('appTitleI').value=appTitle;
+  document.getElementById('appSubtitleI').value=appSubtitle;
   document.getElementById('modeSelect').value=mode;
   document.getElementById('vaultCostI').value=vaultCost;
   document.getElementById('vaultPtsI').value=vaultPts;
@@ -1085,14 +1105,19 @@ window.addEventListener('click',e=>{ if(e.target===modal) modal.style.display='n
 
 // 儲存機制
 document.getElementById('saveModeBtn').addEventListener('click',()=>{
+  appTitle=document.getElementById('appTitleI').value.trim()||'🚀 班級榮譽星際能量艙';
+  appSubtitle=document.getElementById('appSubtitleI').value.trim()||'凝聚全班卓越・100% 共享福利・期末拍賣大集合';
   mode=document.getElementById('modeSelect').value;
   vaultCost=parseInt(document.getElementById('vaultCostI').value)||12;
   vaultPts=parseInt(document.getElementById('vaultPtsI').value)||0;
+  localStorage.setItem('hm_app_title',appTitle);
+  localStorage.setItem('hm_app_subtitle',appSubtitle);
   localStorage.setItem('hm_mode',mode);
   localStorage.setItem('hm_vault_cost',vaultCost);
   localStorage.setItem('hm_vault_pts',vaultPts);
+  renderHeaderTitle();
   updateView();
-  alert('機制設定已儲存！');
+  alert('設定已儲存！');
 });
 
 // 儲存學生
@@ -1201,7 +1226,7 @@ document.getElementById('clearHistBtn').addEventListener('click',()=>{
 
 // 匯出
 document.getElementById('exportBtn').addEventListener('click',()=>{
-  const data={version:'3.0',exportTime:new Date().toISOString(),mode,vaultPts,vaultCost,students,cells,history,pw:adminPw};
+  const data={version:'3.1',exportTime:new Date().toISOString(),appTitle,appSubtitle,mode,vaultPts,vaultCost,students,cells,history,pw:adminPw};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
@@ -1218,6 +1243,8 @@ document.getElementById('importFile').addEventListener('change',e=>{
       const d=JSON.parse(evt.target.result);
       if(d.students&&d.cells){
         students=d.students; cells=d.cells;
+        if(d.appTitle) { appTitle=d.appTitle; localStorage.setItem('hm_app_title',appTitle); }
+        if(d.appSubtitle) { appSubtitle=d.appSubtitle; localStorage.setItem('hm_app_subtitle',appSubtitle); }
         if(d.mode) mode=d.mode;
         if(d.vaultPts!==undefined) vaultPts=d.vaultPts;
         if(d.vaultCost!==undefined) vaultCost=d.vaultCost;
@@ -1229,6 +1256,7 @@ document.getElementById('importFile').addEventListener('change',e=>{
         localStorage.setItem('hm_vault_pts',vaultPts);
         localStorage.setItem('hm_vault_cost',vaultCost);
         localStorage.setItem('hm_history',JSON.stringify(history));
+        renderHeaderTitle();
         initGrid(); updateView();
         alert('備份匯入成功！');
         modal.style.display='none';
@@ -1239,6 +1267,7 @@ document.getElementById('importFile').addEventListener('change',e=>{
 });
 
 /* ── 初始化 ── */
+renderHeaderTitle();
 initGrid();
 updateView();
 </script>

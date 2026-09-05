@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>班級榮譽星際能量艙</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-tap-highlight-color:transparent}
+
+body{
+  background:#060c18;
+  color:#f8fafc;
+  font-family:"PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:10px;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 50%,rgba(14,165,233,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 20%,rgba(139,92,246,0.07) 0%,transparent 60%);
+}
+
+/* ───── HEADER ───── */
+header{
+  width:100%;max-width:1000px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;padding:10px 18px;
+  background:rgba(14,20,36,0.85);
+  border:1px solid rgba(56,189,248,0.25);
+  border-radius:16px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 0 20px rgba(56,189,248,0.08);
+}
+.hdr-left h1{
+  font-size:1.35rem;font-weight:900;letter-spacing:1px;
+  background:linear-gradient(90deg,#fbbf24,#f97316,#fbbf24);
+  background-clip:text;-webkit-background-clip:text;color:transparent;
+  text-shadow:none;filter:drop-shadow(0 0 8px rgba(251,191,36,0.5));
+}
+.hdr-left p{font-size:0.78rem;color:#64748b;margin-top:2px}
+.hdr-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+.mode-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(14,165,233,0.12);
+  border:1px solid rgba(56,189,248,0.4);
+  color:#38bdf8;padding:5px 12px;border-radius:20px;
+  font-size:0.78rem;font-weight:700;cursor:pointer;transition:.2s;
+}
+.mode-pill:hover{background:rgba(14,165,233,0.22)}
+
+.btn-hdr{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  color:#cbd5e1;padding:5px 12px;border-radius:8px;
+  font-size:0.78rem;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;gap:4px;
+}
+.btn-hdr:hover{background:rgba(255,255,255,0.1);color:#fff}
+.btn-hdr.lock{border-color:rgba(251,191,36,0.4);color:#fbbf24}
+.btn-hdr.lock:hover{background:rgba(251,191,36,0.12)}
+
+/* ───── MACHINE ───── */
+.machine{
+  width:100%;max-width:1000px;
+  background:linear-gradient(135deg,rgba(14,20,40,0.95),rgba(6,12,24,0.98));
+  border:3px solid transparent;
+  border-radius:24px;padding:16px;
+  position:relative;
+  box-shadow:
+    0 0 0 1px rgba(56,189,248,0.2),
+    0 0 40px rgba(14,165,233,0.15),
+    0 20px 60px rgba(0,0,0,0.6),
+    inset 0 0 60px rgba(0,0,0,0.4);
+}
+.machine::before{
+  content:'';position:absolute;inset:-3px;border-radius:26px;
+  background:linear-gradient(135deg,#0ea5e9,#8b5cf6,#f59e0b,#0ea5e9);
+  background-size:300% 300%;animation:borderGlow 4s ease infinite;z-index:-1;
+}
+@keyframes borderGlow{
+  0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}
+}
+
+/* ───── GRID 7×7 ───── */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  grid-template-rows:repeat(7,1fr);
+  gap:7px;
+  width:100%;aspect-ratio:7/6.2;max-height:630px;
+}
+
+/* ───── CELL ───── */
+.cell{
+  border-radius:12px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:4px 2px;
+  position:relative;
+  cursor:default;
+  transition:transform .1s,box-shadow .1s;
+  overflow:hidden;
+}
+.cell::after{
+  content:'';position:absolute;inset:0;border-radius:12px;
+  background:linear-gradient(135deg,rgba(255,255,255,0.06),transparent);
+  pointer-events:none;
+}
+
+/* 各類別樣式 */
+.cell.hw{
+  background:linear-gradient(145deg,#0c2d4e,#071a2e);
+  border:1.5px solid rgba(56,189,248,0.35);
+  box-shadow:0 0 8px rgba(14,165,233,0.15),inset 0 1px 0 rgba(56,189,248,0.1);
+}
+.cell.atm{
+  background:linear-gradient(145deg,#1a0b3d,#0d0620);
+  border:1.5px solid rgba(139,92,246,0.35);
+  box-shadow:0 0 8px rgba(139,92,246,0.15),inset 0 1px 0 rgba(139,92,246,0.1);
+}
+.cell.grand{
+  background:linear-gradient(145deg,#2d1a00,#1a0f00);
+  border:1.5px solid rgba(245,158,11,0.4);
+  box-shadow:0 0 8px rgba(245,158,11,0.2),inset 0 1px 0 rgba(245,158,11,0.1);
+}
+.cell.auc{
+  background:linear-gradient(145deg,#002d1a,#001510);
+  border:1.5px solid rgba(16,185,129,0.35);
+  box-shadow:0 0 8px rgba(16,185,129,0.15),inset 0 1px 0 rgba(16,185,129,0.1);
+}
+
+.cell-icon{font-size:1.8rem;line-height:1;margin-bottom:3px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))}
+.cell-kw{
+  font-size:0.72rem;font-weight:800;text-align:center;
+  line-height:1.2;letter-spacing:0.5px;
+  color:rgba(255,255,255,0.85);
+}
+
+/* 跑燈 ACTIVE */
+.cell.active{
+  background:linear-gradient(135deg,#fef08a,#fbbf24) !important;
+  border-color:#fff !important;
+  box-shadow:0 0 30px #fde047,0 0 15px #fbbf24,inset 0 0 10px rgba(255,255,255,0.4) !important;
+  transform:scale(1.1) !important;z-index:10;
+}
+.cell.active .cell-icon{filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))}
+.cell.active .cell-kw{color:#0f172a !important;font-weight:900}
+
+/* ───── CENTER STAGE ───── */
+.stage{
+  grid-column:2/7;grid-row:2/7;
+  background:radial-gradient(circle at 40% 30%,rgba(14,165,233,0.08),transparent 60%),
+             radial-gradient(circle at 70% 70%,rgba(139,92,246,0.06),transparent 60%),
+             linear-gradient(145deg,rgba(15,23,42,0.98),rgba(6,12,24,0.99));
+  border:1px solid rgba(56,189,248,0.15);
+  border-radius:18px;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  padding:14px;
+  box-shadow:inset 0 0 40px rgba(0,0,0,0.6);
+  position:relative;overflow:hidden;
+}
+.stage::before{
+  content:'';position:absolute;
+  top:-50%;left:-50%;width:200%;height:200%;
+  background:conic-gradient(from 0deg,transparent 0deg,rgba(56,189,248,0.03) 60deg,transparent 120deg);
+  animation:stageSpin 20s linear infinite;pointer-events:none;
+}
+@keyframes stageSpin{to{transform:rotate(360deg)}}
+
+/* 頂部狀態列 */
+.stage-top{
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(6,12,24,0.7);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px;padding:8px 14px;
+  backdrop-filter:blur(8px);position:relative;z-index:1;
+}
+.bank-area{display:flex;align-items:center;gap:10px}
+.bank-emoji{font-size:1.6rem}
+.bank-info .lbl{font-size:0.72rem;color:#64748b}
+.bank-info .val{
+  font-size:1.3rem;font-weight:900;font-family:monospace;
+  color:#fbbf24;text-shadow:0 0 10px rgba(251,191,36,0.5);
+}
+.mode-info{text-align:right}
+.mode-info .lbl{font-size:0.7rem;color:#64748b}
+.mode-info .val{font-size:0.88rem;font-weight:700;color:#38bdf8}
+
+/* 中央演出區 */
+.stage-core{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex:1;padding:8px;position:relative;z-index:1;
+}
+.status-txt{
+  font-size:1.05rem;font-weight:700;color:#38bdf8;
+  letter-spacing:1px;margin-bottom:8px;text-align:center;
+  text-shadow:0 0 12px rgba(56,189,248,0.4);
+}
+
+/* 眾籌進度條 */
+.bar-wrap{
+  width:75%;max-width:320px;
+  background:rgba(6,12,24,0.8);
+  border:1px solid rgba(56,189,248,0.2);
+  border-radius:12px;height:18px;overflow:hidden;position:relative;
+  margin:4px auto;
+}
+.bar-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#0284c7,#38bdf8);
+  box-shadow:0 0 10px #38bdf8;transition:width .4s ease;
+}
+.bar-txt{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:0.7rem;font-weight:900;color:#fff;text-shadow:0 1px 3px #000;
+}
+
+.angel-msg{
+  display:none;
+  background:linear-gradient(90deg,#ec4899,#8b5cf6);
+  color:#fff;padding:3px 14px;border-radius:20px;
+  font-size:0.75rem;font-weight:700;margin-top:4px;
+  animation:pls .8s ease infinite alternate;
+}
+@keyframes pls{from{opacity:.8;transform:scale(.98)}to{opacity:1;transform:scale(1.02)}}
+
+/* 大撲滿快速投幣 */
+.deposit-row{display:none;gap:6px;margin-top:6px;flex-wrap:wrap;justify-content:center}
+.btn-dep{
+  background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.35);
+  color:#fbbf24;padding:4px 10px;border-radius:8px;font-size:0.75rem;
+  font-weight:700;cursor:pointer;transition:.2s;
+}
+.btn-dep:hover{background:rgba(251,191,36,0.2)}
+
+/* 底部按鈕區 */
+.stage-bottom{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  position:relative;z-index:1;
+}
+.cost-txt{font-size:0.78rem;color:#475569;text-align:center}
+
+#startBtn{
+  background:linear-gradient(180deg,#0284c7,#0369a1);
+  color:#fff;border:2px solid rgba(125,211,252,0.5);
+  padding:12px 0;font-size:1.35rem;font-weight:900;letter-spacing:3px;
+  border-radius:50px;cursor:pointer;width:72%;max-width:300px;
+  box-shadow:0 6px 0 #075985,0 8px 20px rgba(14,165,233,0.35);
+  transition:all .1s;position:relative;overflow:hidden;
+}
+#startBtn::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  animation:shine 3s infinite;
+}
+@keyframes shine{to{left:200%}}
+#startBtn:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #075985}
+#startBtn:disabled{
+  background:linear-gradient(180deg,#1e293b,#0f172a);
+  border-color:rgba(255,255,255,0.06);color:#334155;
+  box-shadow:none;cursor:not-allowed;
+}
+#startBtn:disabled::before{display:none}
+
+/* ───── 中獎大卡片 OVERLAY ───── */
+#prizeOverlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.prize-card{
+  background:linear-gradient(145deg,#0f172a,#1e293b);
+  border:2px solid rgba(251,191,36,0.5);
+  border-radius:24px;padding:36px 40px;
+  max-width:500px;width:100%;text-align:center;
+  box-shadow:0 0 60px rgba(251,191,36,0.2),0 20px 60px rgba(0,0,0,0.8);
+  animation:cardIn .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.prize-card::before{
+  content:'';position:absolute;inset:0;border-radius:24px;
+  background:conic-gradient(from 0deg,rgba(251,191,36,0.1),rgba(139,92,246,0.1),rgba(14,165,233,0.1),rgba(251,191,36,0.1));
+  animation:cardBorder 4s linear infinite;
+}
+@keyframes cardBorder{to{transform:rotate(360deg)}}
+@keyframes cardIn{from{opacity:0;transform:scale(.7) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.prize-card-inner{position:relative;z-index:1}
+.prize-crown{font-size:2.5rem;margin-bottom:8px;animation:bounce2 1s ease infinite alternate}
+@keyframes bounce2{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.prize-big-icon{font-size:5rem;margin:10px 0;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5))}
+.prize-cat-badge{
+  display:inline-block;padding:3px 14px;border-radius:20px;
+  font-size:0.72rem;font-weight:800;letter-spacing:1px;margin-bottom:10px;
+}
+.prize-cat-badge.hw{background:rgba(14,165,233,0.2);color:#38bdf8;border:1px solid rgba(56,189,248,0.3)}
+.prize-cat-badge.atm{background:rgba(139,92,246,0.2);color:#a78bfa;border:1px solid rgba(139,92,246,0.3)}
+.prize-cat-badge.grand{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.3)}
+.prize-cat-badge.auc{background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.3)}
+
+.prize-title{font-size:1.8rem;font-weight:900;color:#fef08a;margin-bottom:12px;line-height:1.2}
+.prize-desc{font-size:0.9rem;color:#94a3b8;line-height:1.6;margin-bottom:20px;padding:12px;background:rgba(0,0,0,0.3);border-radius:10px}
+.prize-rule{font-size:0.78rem;color:#475569;margin-bottom:20px}
+.btn-prize-close{
+  background:linear-gradient(135deg,#0284c7,#7c3aed);
+  border:none;color:#fff;padding:12px 40px;
+  border-radius:50px;font-size:1rem;font-weight:700;letter-spacing:1px;
+  cursor:pointer;box-shadow:0 4px 15px rgba(14,165,233,0.3);
+  transition:.2s;
+}
+.btn-prize-close:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(14,165,233,0.4)}
+
+/* 彩花粒子 */
+#confettiCanvas{position:fixed;inset:0;z-index:199;pointer-events:none;display:none}
+
+/* ───── 密碼輸入 OVERLAY ───── */
+#lockOverlay{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.9);backdrop-filter:blur(16px);
+  align-items:center;justify-content:center;
+}
+.lock-card{
+  background:linear-gradient(145deg,#0f172a,#1e293b);
+  border:2px solid rgba(251,191,36,0.4);border-radius:20px;
+  padding:36px;max-width:380px;width:100%;text-align:center;
+  box-shadow:0 0 40px rgba(251,191,36,0.15);
+  animation:cardIn .35s cubic-bezier(.34,1.56,.64,1);
+}
+.lock-card h3{font-size:1.3rem;font-weight:900;color:#fbbf24;margin:10px 0 6px}
+.lock-card p{font-size:0.82rem;color:#64748b;margin-bottom:20px}
+.pin-display{
+  display:flex;gap:12px;justify-content:center;margin-bottom:20px;
+}
+.pin-dot{
+  width:16px;height:16px;border-radius:50%;
+  background:#1e293b;border:2px solid #334155;transition:.2s;
+}
+.pin-dot.filled{background:#fbbf24;border-color:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,0.6)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.numpad-btn{
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+  color:#f1f5f9;padding:14px;border-radius:12px;
+  font-size:1.2rem;font-weight:700;cursor:pointer;transition:.15s;
+}
+.numpad-btn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2)}
+.numpad-btn:active{transform:scale(.95)}
+.btn-lock-cancel{
+  background:transparent;border:1px solid #334155;color:#64748b;
+  padding:8px 20px;border-radius:8px;font-size:0.85rem;cursor:pointer;
+  width:100%;transition:.2s;
+}
+.btn-lock-cancel:hover{border-color:#475569;color:#94a3b8}
+
+/* ───── MODAL 後台 ───── */
+.modal{
+  display:none;position:fixed;inset:0;z-index:250;
+  background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;padding:16px;
+}
+.modal-card{
+  background:#0f172a;border:1px solid rgba(56,189,248,0.25);
+  border-radius:18px;width:100%;max-width:640px;max-height:88vh;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+}
+.modal-hdr{
+  padding:12px 18px;background:#060c18;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.modal-hdr h2{font-size:1.05rem;color:#38bdf8}
+.modal-close{background:transparent;border:none;color:#64748b;font-size:1.4rem;cursor:pointer}
+.modal-body{padding:16px;overflow-y:auto;font-size:0.86rem}
+.tab-nav{display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:8px;flex-wrap:wrap}
+.tab-btn{
+  background:transparent;border:none;color:#64748b;
+  font-size:0.82rem;cursor:pointer;padding:5px 10px;
+  border-radius:6px;font-weight:700;transition:.15s;
+}
+.tab-btn.on{background:rgba(14,165,233,0.2);color:#38bdf8}
+.tab-panel{display:none}.tab-panel.on{display:block}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-weight:700;color:#94a3b8;margin-bottom:4px;font-size:0.82rem}
+textarea,input[type=text],input[type=number],input[type=password],select{
+  width:100%;background:#060c18;border:1px solid rgba(255,255,255,0.1);
+  color:#f1f5f9;padding:8px 10px;border-radius:8px;font-size:0.83rem;outline:none;
+  font-family:inherit;
+}
+textarea:focus,input:focus,select:focus{border-color:rgba(56,189,248,0.5)}
+.btn-action{
+  background:linear-gradient(135deg,#0284c7,#0369a1);
+  color:#fff;border:none;padding:8px 18px;
+  border-radius:8px;cursor:pointer;font-weight:700;font-size:0.83rem;
+  transition:.15s;
+}
+.btn-action:hover{opacity:.85}
+.btn-danger{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.8rem}
+.hist-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.hist-item{
+  background:#060c18;padding:8px 12px;border-radius:8px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-left:3px solid #fbbf24;
+}
+.hist-item .pname{font-weight:700;color:#f1f5f9;font-size:0.85rem}
+.hist-item .meta{color:#475569;font-size:0.72rem}
+.info-box{background:rgba(14,165,233,0.07);border:1px solid rgba(56,189,248,0.15);border-radius:8px;padding:10px;font-size:0.78rem;color:#64748b;margin-bottom:10px;line-height:1.6}
+
+/* 類別圖例 */
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:0.72rem}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+@media(max-width:640px){
+  .grid{gap:4px;max-height:none}
+  .cell-icon{font-size:1.2rem}
+  .cell-kw{font-size:0.6rem}
+  #startBtn{font-size:1.1rem;padding:10px 0}
+  .prize-title{font-size:1.4rem}
+  .prize-big-icon{font-size:3.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr-left">
+    <h1>🚀 班級榮譽星際能量艙</h1>
+    <p>凝聚全班卓越・100% 共享福利・期末拍賣大集合</p>
+  </div>
+  <div class="hdr-right">
+    <div class="mode-pill" id="modePill">
+      <span id="modePillIcon">👥</span>
+      <span id="modePillTxt">每人扣 1 點</span>
+    </div>
+    <button class="btn-hdr" id="histBtn">📜 紀錄</button>
+    <button class="btn-hdr lock" id="lockBtn">🔒 導師管理</button>
+    <button class="btn-hdr" id="fsBtn">⛶ 全螢幕</button>
+  </div>
+</header>
+
+<!-- MACHINE -->
+<div class="machine">
+  <div class="grid" id="grid">
+
+    <!-- 舞台 (由 JS 定位到 grid) -->
+    <div class="stage" id="stage">
+      <!-- 頂部資訊 -->
+      <div class="stage-top">
+        <div class="bank-area">
+          <div class="bank-emoji" id="bankEmoji">👥</div>
+          <div class="bank-info">
+            <div class="lbl" id="bankLbl">全班榮譽總點數</div>
+            <div class="val" id="bankVal">0 點</div>
+          </div>
+        </div>
+        <div class="mode-info">
+          <div class="lbl" id="modeInfoLbl">在冊人數</div>
+          <div class="val" id="modeInfoVal">12 人</div>
+        </div>
+      </div>
+
+      <!-- 核心演出 -->
+      <div class="stage-core">
+        <div class="status-txt" id="statusTxt">全體達標即可解鎖輪盤！</div>
+
+        <div class="bar-wrap" id="barWrap">
+          <div class="bar-fill" id="barFill"></div>
+          <div class="bar-txt" id="barTxt">能量注入進度 0 / 12</div>
+        </div>
+
+        <div class="angel-msg" id="angelMsg">🎉 觸發【導師神祕加碼】！老師贊助補齊全班能量！</div>
+
+        <div class="deposit-row" id="depositRow">
+          <span style="font-size:.72rem;color:#475569">大撲滿快速投幣：</span>
+          <button class="btn-dep" onclick="dep(1)">＋1點</button>
+          <button class="btn-dep" onclick="dep(5)">＋5點</button>
+          <button class="btn-dep" onclick="dep(12)">＋12點(滿額)</button>
+        </div>
+      </div>
+
+      <!-- 底部按鈕 -->
+      <div class="stage-bottom">
+        <div class="cost-txt" id="costTxt">啟動條件：全班每人貢獻 1 點（不足由導師天使基金補齊）</div>
+        <button id="startBtn">啟　動　輪　盤</button>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#38bdf8"></div><span style="color:#64748b">作業減壓</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div><span style="color:#64748b">氛圍放鬆</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><span style="color:#64748b">綜合大獎</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div><span style="color:#64748b">拍賣連動</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+</div><!-- /machine -->
+
+<!-- 彩花畫布 -->
+<canvas id="confettiCanvas"></canvas>
+
+<!-- ───── 中獎大卡片 ───── -->
+<div id="prizeOverlay" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px">
+  <div class="prize-card">
+    <div class="prize-card-inner">
+      <div class="prize-crown">🏆</div>
+      <div id="pCatBadge" class="prize-cat-badge hw">作業減壓</div>
+      <div class="prize-big-icon" id="pIcon">📝</div>
+      <div class="prize-title" id="pTitle">全班獲得！</div>
+      <div class="prize-desc" id="pDesc">詳細說明</div>
+      <div class="prize-rule" id="pRule"></div>
+      <button class="btn-prize-close" id="prizeCloseBtn">🎊 全班一起享受吧！</button>
+    </div>
+  </div>
+</div>
+
+<!-- ───── 密碼鎖 OVERLAY ───── -->
+<div id="lockOverlay" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.92);backdrop-filter:blur(16px);align-items:center;justify-content:center">
+  <div class="lock-card">
+    <div style="font-size:2.5rem">🔐</div>
+    <h3>導師管理驗證</h3>
+    <p>請輸入 4 位管理員密碼（預設 8888）</p>
+    <div class="pin-display" id="pinDisplay">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="numpad" id="numpad"></div>
+    <button class="btn-lock-cancel" id="lockCancelBtn">取消</button>
+  </div>
+</div>
+
+<!-- ───── 後台管理 MODAL ───── -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <div class="modal-hdr">
+      <h2>🛠️ 導師管理後台</h2>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-nav">
+        <button class="tab-btn on" data-t="t-mode">扣點機制</button>
+        <button class="tab-btn" data-t="t-students">學生名冊</button>
+        <button class="tab-btn" data-t="t-prizes">獎項設定</button>
+        <button class="tab-btn" data-t="t-pw">修改密碼</button>
+        <button class="tab-btn" data-t="t-history">兌換紀錄</button>
+        <button class="tab-btn" data-t="t-backup">備份匯出</button>
+      </div>
+
+      <!-- 扣點機制 -->
+      <div class="tab-panel on" id="t-mode">
+        <div class="fg">
+          <label>啟動機制：</label>
+          <select id="modeSelect">
+            <option value="per_student">【模式 A】全員眾籌（每人扣 1 點，0 點者由導師天使基金代墊）</option>
+            <option value="vault">【模式 B】全班大撲滿（公共點數池，不動個人點數）</option>
+          </select>
+          <div class="info-box" style="margin-top:8px">
+            模式 A 適合強調命運共同體凝聚力；模式 B 讓個人點數 100% 留給期末拍賣會。
+          </div>
+        </div>
+        <div class="fg" id="vaultGrp">
+          <label>大撲滿啟動所需點數：</label>
+          <input type="number" id="vaultCostI" min="1" max="999" value="12">
+          <label style="margin-top:8px">當前大撲滿存額：</label>
+          <input type="number" id="vaultPtsI" min="0" max="9999" value="0">
+        </div>
+        <button class="btn-action" id="saveModeBtn">儲存機制設定</button>
+      </div>
+
+      <!-- 學生名冊 -->
+      <div class="tab-panel" id="t-students">
+        <div class="info-box">格式：座號姓名,點數（每行一人）</div>
+        <textarea id="studentsTA" rows="8" placeholder="01 陳小明,15&#10;02 林小華,20"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn-action" id="saveStudentsBtn">更新名冊</button>
+          <button class="btn-danger" id="resetPtsBtn">全班點數歸零</button>
+        </div>
+      </div>
+
+      <!-- 獎項設定 -->
+      <div class="tab-panel" id="t-prizes">
+        <div class="info-box">
+          格式：圖示 類別 短關鍵字(2-4字) | 詳細說明 | 執行方式<br>
+          類別代碼：hw (作業減壓) · atm (氛圍放鬆) · grand (綜合大獎) · auc (拍賣連動)
+        </div>
+        <textarea id="prizesTA" rows="10"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+            <button class="btn-action" id="savePrizesBtn">更新 24 格獎項</button>
+            <button class="btn-action" id="reshuffleBtn" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">🔀 重新隨機排列</button>
+            <button class="btn-danger" id="resetCellsBtn">還原預設獎項</button>
+          </div>
+      </div>
+
+      <!-- 修改密碼 -->
+      <div class="tab-panel" id="t-pw">
+        <div class="fg">
+          <label>目前密碼：</label>
+          <input type="password" id="oldPwI" placeholder="請輸入目前密碼">
+        </div>
+        <div class="fg">
+          <label>新密碼（4位數字）：</label>
+          <input type="password" id="newPwI" placeholder="請輸入新密碼" maxlength="4">
+        </div>
+        <div class="fg">
+          <label>確認新密碼：</label>
+          <input type="password" id="cfmPwI" placeholder="再輸入一次新密碼" maxlength="4">
+        </div>
+        <button class="btn-action" id="changePwBtn">修改密碼</button>
+      </div>
+
+      <!-- 兌換紀錄 -->
+      <div class="tab-panel" id="t-history">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="color:#64748b;font-size:0.82rem">最近 50 筆兌換紀錄</span>
+          <button class="btn-danger" id="clearHistBtn">清空紀錄</button>
+        </div>
+        <ul class="hist-list" id="histList"></ul>
+      </div>
+
+      <!-- 備份 -->
+      <div class="tab-panel" id="t-backup">
+        <div class="info-box">建議定期匯出備份，防止公用電腦重開機還原造成資料遺失。</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-action" id="exportBtn">📥 匯出 JSON 備份</button>
+          <label class="btn-action" style="cursor:pointer">
+            📤 匯入 JSON 備份
+            <input type="file" id="importFile" accept=".json" style="display:none">
+          </label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   資料定義：通過三方審核的全班性獎勵
+   比例：hw 11格(46%) | atm 7格(29%) | grand 3格(12.5%) | auc 3格(12.5%)
+═══════════════════════════════════════════ */
+const DEFAULT_CELLS = [
+  // ── 作業減壓 hw (11格) ──
+  {icon:"📝",kw:"生字減半",cat:"hw",title:"國語生字練習量減半",desc:"本週所有國語生字甲乙本，全班每個字只需練習 2 次（原來的一半）！",rule:"⚡ 執行時機：當天即時生效 · 字體仍需工整"},
+  {icon:"📝",kw:"生字減半",cat:"hw",title:"國語生字練習量減半",desc:"本週所有國語生字甲乙本，全班每個字只需練習 2 次（原來的一半）！",rule:"⚡ 執行時機：當天即時生效 · 字體仍需工整"},
+  {icon:"📝",kw:"生字減半",cat:"hw",title:"國語生字練習量減半",desc:"本週所有國語生字甲乙本，全班每個字只需練習 2 次（原來的一半）！",rule:"⚡ 執行時機：當天即時生效 · 字體仍需工整"},
+  {icon:"🖼️",kw:"圖文日記",cat:"hw",title:"聯絡簿圖文自由發揮日",desc:"今天聯絡簿的心情小記，全班可以用四格漫畫、塗鴉插圖代替文字書寫！",rule:"✏️ 規則：填滿格框即算完成，圖文皆可，風格不限"},
+  {icon:"🖼️",kw:"圖文日記",cat:"hw",title:"聯絡簿圖文自由發揮日",desc:"今天聯絡簿的心情小記，全班可以用四格漫畫、塗鴉插圖代替文字書寫！",rule:"✏️ 規則：填滿格框即算完成，圖文皆可，風格不限"},
+  {icon:"✂️",kw:"習作減量",cat:"hw",title:"數學習作題數減半",desc:"今天數學習作全班只需完成一半的題目！老師會在習作上標明需完成的範圍。",rule:"📐 執行時機：今日即時生效 · 選擇自己覺得最難的題目優先完成"},
+  {icon:"✂️",kw:"習作減量",cat:"hw",title:"數學習作題數減半",desc:"今天數學習作全班只需完成一半的題目！老師會在習作上標明需完成的範圍。",rule:"📐 執行時機：今日即時生效 · 選擇自己覺得最難的題目優先完成"},
+  {icon:"🕐",kw:"作業寬限",cat:"hw",title:"全班作業寬限一天",desc:"今天老師出的導師作業，全班可以延後一天繳交，明天交也不算遲交！",rule:"📋 限導師作業 · 不含其他科任老師作業 · 已寫完可先繳或帶回修改"},
+  {icon:"📖",kw:"小記減字",cat:"hw",title:"聯絡簿心情小記字數減半",desc:"今天心情小記字數門檻降低一半（原本 50 字只需寫 25 字），輕鬆達標！",rule:"✍️ 格式不限，真情流露，老師最愛看真實的想法"},
+  {icon:"📓",kw:"抄寫免除",cat:"hw",title:"今日板書抄寫自由選擇",desc:"今天課堂板書筆記，全班可自由決定「完整抄寫」或「用自己方式整理重點」！",rule:"🧠 重點整理也算完成，老師鼓勵用大腦思考，不是機械抄寫"},
+  {icon:"🏖️",kw:"早修輕鬆",cat:"hw",title:"早自習靜態自主閱讀日",desc:"今天早自習不排考卷、不寫作業！全班安靜看自己喜歡的課外書、漫畫或繪本。",rule:"📚 全程保持安靜 · 可帶任何課外讀物 · 輕鬆充電迎接新的一天"},
+
+  // ── 氛圍放鬆 atm (7格) ──
+  {icon:"🎵",kw:"音樂伴讀",cat:"atm",title:"課堂自習 Lo-Fi 音樂伴讀日",desc:"今天寫習作、自習或訂正時，老師用教室喇叭播放輕柔 Lo-Fi 純音樂陪伴全班！",rule:"🔊 音量限教室內 · 無人聲純器樂 · 提升專注與放鬆感"},
+  {icon:"🎵",kw:"音樂伴讀",cat:"atm",title:"課堂自習 Lo-Fi 音樂伴讀日",desc:"今天寫習作、自習或訂正時，老師用教室喇叭播放輕柔 Lo-Fi 純音樂陪伴全班！",rule:"🔊 音量限教室內 · 無人聲純器樂 · 提升專注與放鬆感"},
+  {icon:"💤",kw:"午休充電",cat:"atm",title:"週五午休白噪音免趴充電日",desc:"午休不強制趴睡！老師拉上窗簾播放輕柔森林雨聲，全班可靠著椅背安靜看課外書。",rule:"🌿 靜音熔斷機制：出現私語立即切換回趴睡模式 · 請珍惜全班爭取的福利"},
+  {icon:"💤",kw:"午休充電",cat:"atm",title:"週五午休白噪音免趴充電日",desc:"午休不強制趴睡！老師拉上窗簾播放輕柔森林雨聲，全班可靠著椅背安靜看課外書。",rule:"🌿 靜音熔斷機制：出現私語立即切換回趴睡模式 · 請珍惜全班爭取的福利"},
+  {icon:"📚",kw:"晨讀時光",cat:"atm",title:"早自習靜態晨讀時光",desc:"今天早自習全班一起安靜看課外書 20 分鐘，輕鬆開啟美好的一天！",rule:"📖 可帶任何課外讀物 · 全程安靜 · 不評分、不提問"},
+  {icon:"🌧️",kw:"白噪音日",cat:"atm",title:"課堂白噪音專注伴讀日",desc:"今天寫作業或自習時，老師播放大自然白噪音（雨聲/海浪/森林），沉浸式專注學習！",rule:"🎧 純自然音效 · 音量輕柔 · 科學證實可提升專注力 30%"},
+  {icon:"✨",kw:"自由筆記",cat:"atm",title:"課堂彩色筆記自由日",desc:"今天上課記筆記，全班可以使用班級共用彩色筆，用自己喜歡的顏色整理重點！",rule:"🖊️ 班級提供共用彩色筆 · 人人平等使用 · 讓筆記更有個人風格"},
+
+  // ── 綜合活動大獎 grand (3格) ──
+  {icon:"🎲",kw:"桌遊同樂",cat:"grand",title:"綜合活動課：全班分組桌遊同樂會",desc:"今天整節綜合活動課，全班分組在教室內盡情玩桌遊！各組可帶自己的桌遊或用班級現有的。",rule:"🕐 T-5分鐘強制收納 · 音量維持室內交談聲 · 下次繼續玩的前提是今天收納乾淨"},
+  {icon:"🍿",kw:"班級電影",cat:"grand",title:"綜合活動課：班級微型電影院",desc:"今天整節綜合活動課，拉上窗簾、開投影幕，全班一起欣賞精選科普影片或優質動畫！",rule:"🎬 由全班票選影片 · 40分鐘精選影片 · 輕鬆觀賞，不評分不提問"},
+  {icon:"💡",kw:"Kahoot大賽",cat:"grand",title:"綜合活動課：全班 Kahoot 益智 PK 賽",desc:"今天整節綜合活動課，全班用平板參加 Kahoot 知識搶答大賽，題目涵蓋最近學過的內容！",rule:"🏆 個人或小組皆可 · 不計入成績 · 優勝組別可優先領取獎狀或貼紙"},
+
+  // ── 拍賣連動 auc (3格) ──
+  {icon:"🏷️",kw:"拍賣8折",cat:"auc",title:"期末拍賣會！全班起標底價 8 折券",desc:"學期末拍賣會當天，所有拍賣商品的起標底價全面打 8 折！全班一起用更少點數競標更多好物！",rule:"💰 於期末拍賣會當天自動生效 · 今天已解鎖，老師會記錄在班級公告欄"},
+  {icon:"🪙",kw:"退還1點",cat:"auc",title:"能量返還：全班每人退回 1 點",desc:"今天眾籌的點數全額退還！本次集資完全免費，全班每人帳戶各退回 1 點！",rule:"⚡ 系統自動結算 · 每人帳戶立即回補 1 點 · 等於今天的集資是老師請客！"},
+  {icon:"⭐",kw:"全員加點",cat:"auc",title:"幸運爆擊：全班每人加贈 1 點",desc:"超級幸運！全班每位同學的榮譽點數帳戶各加贈 1 點，存進期末拍賣會的小金庫！",rule:"🌟 系統自動發放 · 每人各加 1 點 · 期末拍賣會的競標力瞬間提升！"},
+];
+
+const DEFAULT_STUDENTS = [
+  {name:"01 陳小明",points:8},{name:"02 林小華",points:12},
+  {name:"03 張阿美",points:15},{name:"04 黃志強",points:0},
+  {name:"05 許家豪",points:6},{name:"06 吳珮珊",points:10},
+  {name:"07 蔡宗翰",points:4},{name:"08 鄭雅婷",points:9},
+  {name:"09 謝承佑",points:14},{name:"10 楊子萱",points:5},
+  {name:"11 劉冠宇",points:11},{name:"12 洪欣怡",points:7},
+];
+
+/* ── 狀態讀取 ── */
+let mode      = localStorage.getItem('hm_mode') || 'per_student';
+let vaultPts  = parseInt(localStorage.getItem('hm_vault_pts')) || 0;
+let vaultCost = parseInt(localStorage.getItem('hm_vault_cost')) || 12;
+let students  = JSON.parse(localStorage.getItem('hm_students')) || DEFAULT_STUDENTS;
+// 版本檢查：若舊資料缺少 kw 欄位（舊格式），強制清除並使用新預設值
+const _rawCells = JSON.parse(localStorage.getItem('hm_cells'));
+const _isNewFormat = Array.isArray(_rawCells) && _rawCells.length > 0 && _rawCells[0].kw !== undefined;
+// Fisher-Yates 洗牌：讓各類別交錯分散，避免同類別連續排列
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+let cells = _isNewFormat ? _rawCells : shuffle(DEFAULT_CELLS);
+if (!_isNewFormat) { localStorage.removeItem('hm_cells'); }
+let history   = JSON.parse(localStorage.getItem('hm_history'))  || [];
+let adminPw   = localStorage.getItem('hm_pw') || '8888';
+
+/* ── 外圈座標 ── */
+const COORDS=[];
+for(let c=1;c<=7;c++) COORDS.push({r:1,c});
+for(let r=2;r<=7;r++) COORDS.push({r,c:7});
+for(let c=6;c>=1;c--) COORDS.push({r:7,c});
+for(let r=6;r>=2;r--) COORDS.push({r,c:1});
+
+/* ── Audio ── */
+let actx=null;
+function getAC(){
+  if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended') actx.resume();
+  return actx;
+}
+function beep(f=700,d=0.035){
+  try{
+    const c=getAC(),o=c.createOscillator(),g=c.createGain();
+    o.type='square';o.frequency.setValueAtTime(f,c.currentTime);
+    g.gain.setValueAtTime(0.06,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);
+    o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d);
+  }catch(e){}
+}
+function winSound(){
+  [523,659,784,1047,1319].forEach((f,i)=>{
+    setTimeout(()=>{
+      try{
+        const c=getAC(),o=c.createOscillator(),g=c.createGain();
+        o.type='triangle';o.frequency.setValueAtTime(f,c.currentTime);
+        g.gain.setValueAtTime(0.18,c.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.4);
+        o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.4);
+      }catch(e){}
+    },i*100);
+  });
+}
+
+/* ── Grid 初始化 ── */
+const grid=document.getElementById('grid');
+const stage=document.getElementById('stage');
+let cellEls=[];
+
+function initGrid(){
+  // 清除舊格子保留 stage
+  Array.from(grid.children).forEach(c=>{ if(c!==stage) c.remove(); });
+  cellEls=[];
+
+  COORDS.forEach((pos,i)=>{
+    const d=cells[i]||{icon:'🎁',kw:'全班福利',cat:'grand',title:'全班共享福利',desc:'',rule:''};
+    const el=document.createElement('div');
+    el.className=`cell ${d.cat}`;
+    el.style.gridRow=pos.r;
+    el.style.gridColumn=pos.c;
+    el.innerHTML=`<div class="cell-icon">${d.icon}</div><div class="cell-kw">${d.kw}</div>`;
+    grid.appendChild(el);
+    cellEls.push(el);
+  });
+
+  // stage 固定位置
+  stage.style.gridColumn='2/7';
+  stage.style.gridRow='2/7';
+}
+
+/* ── View 更新 ── */
+function updateView(){
+  const bankEmoji=document.getElementById('bankEmoji');
+  const bankLbl=document.getElementById('bankLbl');
+  const bankVal=document.getElementById('bankVal');
+  const modeInfoLbl=document.getElementById('modeInfoLbl');
+  const modeInfoVal=document.getElementById('modeInfoVal');
+  const barWrap=document.getElementById('barWrap');
+  const barFill=document.getElementById('barFill');
+  const barTxt=document.getElementById('barTxt');
+  const depositRow=document.getElementById('depositRow');
+  const costTxt=document.getElementById('costTxt');
+  const statusTxt=document.getElementById('statusTxt');
+  const startBtn=document.getElementById('startBtn');
+  const modePillTxt=document.getElementById('modePillTxt');
+  const modePillIcon=document.getElementById('modePillIcon');
+
+  if(mode==='per_student'){
+    modePillIcon.textContent='👥';
+    modePillTxt.textContent='每人扣 1 點';
+    bankEmoji.textContent='👥';
+    bankLbl.textContent='全班榮譽總點數';
+    const total=students.reduce((s,x)=>s+x.points,0);
+    bankVal.textContent=total+'點';
+    modeInfoLbl.textContent='全班在冊人數';
+    modeInfoVal.textContent=students.length+'人';
+    barWrap.style.display='block';
+    depositRow.style.display='none';
+    barFill.style.width='100%';
+    barTxt.textContent=`全班 ${students.length} 人集資就緒`;
+    costTxt.textContent=`啟動條件：全班每人貢獻 1 點（0點者由導師天使基金代墊）`;
+    if(!isSpinning){ startBtn.disabled=false; statusTxt.textContent='全體集資完成，隨時可啟動輪盤！'; }
+  } else {
+    modePillIcon.textContent='🏦';
+    modePillTxt.textContent='大撲滿模式';
+    bankEmoji.textContent='🏦';
+    bankLbl.textContent='班級大撲滿存額';
+    bankVal.textContent=vaultPts+'點';
+    modeInfoLbl.textContent='單次啟動需';
+    modeInfoVal.textContent=vaultCost+'點';
+    barWrap.style.display='none';
+    depositRow.style.display='flex';
+    costTxt.textContent=`啟動條件：大撲滿累積 ${vaultCost} 點（目前 ${vaultPts} 點）`;
+    if(!isSpinning){
+      if(vaultPts>=vaultCost){
+        startBtn.disabled=false;
+        statusTxt.textContent='大撲滿能量充沛，按下按鈕啟動！';
+      } else {
+        startBtn.disabled=true;
+        statusTxt.textContent=`大撲滿尚缺 ${vaultCost-vaultPts} 點，繼續努力！`;
+      }
+    }
+  }
+}
+
+window.dep=function(n){
+  getAC(); beep(900,0.05);
+  vaultPts+=n;
+  localStorage.setItem('hm_vault_pts',vaultPts);
+  updateView();
+};
+
+/* ── 轉盤邏輯 ── */
+let curIdx=0, isSpinning=false;
+
+function spin(target, onDone){
+  isSpinning=true;
+  document.getElementById('startBtn').disabled=true;
+  const steps=24*3+((target-curIdx+24)%24);
+  let n=0, speed=38;
+
+  function step(){
+    cellEls[curIdx].classList.remove('active');
+    curIdx=(curIdx+1)%24;
+    cellEls[curIdx].classList.add('active');
+    n++;
+    beep(640+(n%6)*55, 0.028);
+    if(steps-n<=15) speed+=28;
+    if(n<steps) setTimeout(step,speed);
+    else { isSpinning=false; if(onDone) onDone(); }
+  }
+  step();
+}
+
+document.getElementById('startBtn').addEventListener('click',()=>{
+  if(isSpinning) return;
+  getAC();
+  document.getElementById('angelMsg').style.display='none';
+
+  if(mode==='per_student'){
+    let deficit=0;
+    students.forEach(s=>{ if(s.points>=1) s.points-=1; else deficit++; });
+    localStorage.setItem('hm_students',JSON.stringify(students));
+    if(deficit>0){
+      const am=document.getElementById('angelMsg');
+      am.textContent=`🎉 觸發【導師神祕加碼】！老師贊助 ${deficit} 點補齊全班能量！`;
+      am.style.display='inline-block';
+    }
+  } else {
+    if(vaultPts<vaultCost) return;
+    vaultPts-=vaultCost;
+    localStorage.setItem('hm_vault_pts',vaultPts);
+  }
+
+  document.getElementById('statusTxt').textContent='🌌 星際能量啟動中… 凝聚全班幸運光子！';
+  document.getElementById('startBtn').disabled=true;
+
+  const target=Math.floor(Math.random()*24);
+
+  spin(target,()=>{
+    const prize=cells[target];
+    winSound();
+    launchConfetti();
+
+    // 顯示中獎大卡
+    const overlay=document.getElementById('prizeOverlay');
+    const catNames={hw:'作業減壓',atm:'氛圍放鬆',grand:'綜合大獎',auc:'拍賣連動'};
+    document.getElementById('pCatBadge').textContent=catNames[prize.cat]||'全班福利';
+    document.getElementById('pCatBadge').className=`prize-cat-badge ${prize.cat}`;
+    document.getElementById('pIcon').textContent=prize.icon;
+    document.getElementById('pTitle').textContent=prize.title;
+    document.getElementById('pDesc').textContent=prize.desc;
+    document.getElementById('pRule').textContent=prize.rule;
+    overlay.style.display='flex';
+
+    // 紀錄
+    const now=new Date();
+    const t=`${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    history.unshift({prize:`${prize.icon} ${prize.title}`,mode:mode==='per_student'?'全員眾籌':'大撲滿',time:t});
+    if(history.length>50) history.pop();
+    localStorage.setItem('hm_history',JSON.stringify(history));
+
+    // 特殊點數結算
+    if(prize.kw==='退還1點'){
+      setTimeout(()=>{
+        if(mode==='per_student'){ students.forEach(s=>s.points+=1); localStorage.setItem('hm_students',JSON.stringify(students)); }
+        else { vaultPts+=vaultCost; localStorage.setItem('hm_vault_pts',vaultPts); }
+        updateView();
+      },800);
+    } else if(prize.kw==='全員加點'){
+      setTimeout(()=>{
+        students.forEach(s=>s.points+=1);
+        localStorage.setItem('hm_students',JSON.stringify(students));
+        updateView();
+      },800);
+    }
+
+    updateView();
+  });
+});
+
+/* 關閉中獎卡 */
+document.getElementById('prizeCloseBtn').addEventListener('click',()=>{
+  document.getElementById('prizeOverlay').style.display='none';
+  stopConfetti();
+  updateView();
+});
+
+/* ── 彩花 ── */
+const cnv=document.getElementById('confettiCanvas');
+const ctx2d=cnv.getContext('2d');
+let confetti=[], confettiAF=null;
+function launchConfetti(){
+  cnv.style.display='block';
+  cnv.width=window.innerWidth; cnv.height=window.innerHeight;
+  confetti=[];
+  for(let i=0;i<180;i++){
+    confetti.push({
+      x:Math.random()*cnv.width, y:-10,
+      vy:2+Math.random()*4, vx:(Math.random()-0.5)*3,
+      r:4+Math.random()*6, rot:Math.random()*360,
+      rv:(Math.random()-0.5)*8,
+      color:`hsl(${Math.floor(Math.random()*360)},90%,60%)`,
+      alpha:1
+    });
+  }
+  drawConfetti();
+}
+function drawConfetti(){
+  ctx2d.clearRect(0,0,cnv.width,cnv.height);
+  let alive=false;
+  confetti.forEach(p=>{
+    p.y+=p.vy; p.x+=p.vx; p.rot+=p.rv; p.alpha-=0.004;
+    if(p.alpha>0){ alive=true; }
+    ctx2d.save();
+    ctx2d.globalAlpha=Math.max(0,p.alpha);
+    ctx2d.translate(p.x,p.y);
+    ctx2d.rotate(p.rot*Math.PI/180);
+    ctx2d.fillStyle=p.color;
+    ctx2d.fillRect(-p.r/2,-p.r/2,p.r,p.r*0.6);
+    ctx2d.restore();
+  });
+  if(alive) confettiAF=requestAnimationFrame(drawConfetti);
+  else stopConfetti();
+}
+function stopConfetti(){
+  if(confettiAF){ cancelAnimationFrame(confettiAF); confettiAF=null; }
+  ctx2d.clearRect(0,0,cnv.width,cnv.height);
+  cnv.style.display='none';
+}
+
+/* ── 模式切換（Header Badge）── */
+document.getElementById('modePill').addEventListener('click',()=>{
+  requireAuth(()=>{
+    mode=mode==='per_student'?'vault':'per_student';
+    localStorage.setItem('hm_mode',mode);
+    updateView();
+  });
+});
+
+/* ── 全螢幕 ── */
+document.getElementById('fsBtn').addEventListener('click',()=>{
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen().catch(()=>{});
+});
+
+/* ═══════════════════════════════════════════
+   密碼鎖機制
+═══════════════════════════════════════════ */
+let pinBuf='', pinCb=null;
+
+function requireAuth(cb){
+  pinBuf=''; pinCb=cb;
+  updatePinDots();
+  document.getElementById('lockOverlay').style.display='flex';
+}
+
+// 建立數字鍵盤
+const numpad=document.getElementById('numpad');
+[1,2,3,4,5,6,7,8,9,'✕',0,'⌫'].forEach(k=>{
+  const b=document.createElement('button');
+  b.className='numpad-btn'; b.textContent=k;
+  b.addEventListener('click',()=>handlePin(String(k)));
+  numpad.appendChild(b);
+});
+
+function handlePin(k){
+  beep(800,0.04);
+  if(k==='✕'){ closeLock(); return; }
+  if(k==='⌫'){ pinBuf=pinBuf.slice(0,-1); updatePinDots(); return; }
+  if(pinBuf.length>=4) return;
+  pinBuf+=k;
+  updatePinDots();
+  if(pinBuf.length===4){
+    setTimeout(()=>{
+      if(pinBuf===adminPw){
+        closeLock();
+        if(pinCb){ pinCb(); pinCb=null; }
+      } else {
+        pinBuf='';
+        updatePinDots();
+        // 錯誤震動視覺
+        const disp=document.getElementById('pinDisplay');
+        disp.style.animation='shake .3s ease';
+        setTimeout(()=>disp.style.animation='',350);
+        beep(300,0.15);
+      }
+    },100);
+  }
+}
+
+function updatePinDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById(`pd${i}`);
+    d.classList.toggle('filled',i<pinBuf.length);
+  }
+}
+function closeLock(){
+  document.getElementById('lockOverlay').style.display='none';
+  pinBuf='';
+}
+document.getElementById('lockCancelBtn').addEventListener('click',closeLock);
+
+// CSS shake
+const styleEl=document.createElement('style');
+styleEl.textContent='@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}';
+document.head.appendChild(styleEl);
+
+/* ── 導師管理按鈕 ── */
+document.getElementById('lockBtn').addEventListener('click',()=>{
+  requireAuth(openModal);
+});
+document.getElementById('histBtn').addEventListener('click',()=>{
+  requireAuth(()=>openModal('t-history'));
+});
+
+/* ═══════════════════════════════════════════
+   後台 Modal
+═══════════════════════════════════════════ */
+const modal=document.getElementById('modal');
+
+function openModal(tab='t-mode'){
+  modal.style.display='flex';
+  switchTab(tab);
+
+  document.getElementById('modeSelect').value=mode;
+  document.getElementById('vaultCostI').value=vaultCost;
+  document.getElementById('vaultPtsI').value=vaultPts;
+  document.getElementById('studentsTA').value=students.map(s=>`${s.name},${s.points}`).join('\n');
+  document.getElementById('prizesTA').value=cells.map(c=>`${c.icon} ${c.cat} ${c.kw}|${c.title}|${c.desc}|${c.rule}`).join('\n');
+  renderHistory();
+}
+
+// Tab 切換
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>switchTab(b.dataset.t));
+});
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('on',b.dataset.t===id));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('on',p.id===id));
+}
+
+document.getElementById('modalClose').addEventListener('click',()=>modal.style.display='none');
+window.addEventListener('click',e=>{ if(e.target===modal) modal.style.display='none'; });
+
+// 儲存機制
+document.getElementById('saveModeBtn').addEventListener('click',()=>{
+  mode=document.getElementById('modeSelect').value;
+  vaultCost=parseInt(document.getElementById('vaultCostI').value)||12;
+  vaultPts=parseInt(document.getElementById('vaultPtsI').value)||0;
+  localStorage.setItem('hm_mode',mode);
+  localStorage.setItem('hm_vault_cost',vaultCost);
+  localStorage.setItem('hm_vault_pts',vaultPts);
+  updateView();
+  alert('機制設定已儲存！');
+});
+
+// 儲存學生
+document.getElementById('saveStudentsBtn').addEventListener('click',()=>{
+  const lines=document.getElementById('studentsTA').value.trim().split('\n').filter(l=>l.trim());
+  const parsed=lines.map(l=>{ const p=l.split(','); return {name:p[0]?.trim()||'同學',points:parseInt(p[1])||0}; });
+  if(parsed.length>0){
+    students=parsed;
+    localStorage.setItem('hm_students',JSON.stringify(students));
+    updateView();
+    alert(`已更新 ${students.length} 位學生名冊！`);
+  }
+});
+
+// 重置點數
+document.getElementById('resetPtsBtn').addEventListener('click',()=>{
+  if(confirm('確定將全班個人點數清零？（此操作不可逆）')){
+    students.forEach(s=>s.points=0);
+    localStorage.setItem('hm_students',JSON.stringify(students));
+    updateView();
+  }
+});
+
+// 重新隨機排列
+document.getElementById('reshuffleBtn').addEventListener('click',()=>{
+  cells = shuffle(cells);
+  localStorage.setItem('hm_cells',JSON.stringify(cells));
+  document.getElementById('prizesTA').value=cells.map(c=>`${c.icon} ${c.cat} ${c.kw}|${c.title}|${c.desc}|${c.rule}`).join('\n');
+  initGrid();
+  alert('已重新隨機排列 24 格獎項！');
+});
+
+// 還原預設獎項（同時洗牌）
+document.getElementById('resetCellsBtn').addEventListener('click',()=>{
+  if(confirm('確定還原為預設獎項並重新隨機排列？')){
+    cells = shuffle(DEFAULT_CELLS);
+    localStorage.setItem('hm_cells',JSON.stringify(cells));
+    document.getElementById('prizesTA').value=cells.map(c=>`${c.icon} ${c.cat} ${c.kw}|${c.title}|${c.desc}|${c.rule}`).join('\n');
+    initGrid();
+    alert('已還原預設獎項並隨機排列！');
+  }
+});
+
+// 儲存獎項
+document.getElementById('savePrizesBtn').addEventListener('click',()=>{
+  const lines=document.getElementById('prizesTA').value.trim().split('\n').filter(l=>l.trim());
+  if(lines.length>=24){
+    cells=lines.slice(0,24).map(l=>{
+      const [head,...rest]=l.split('|');
+      const pts=head.trim().split(' ');
+      const icon=pts[0]||'🎁';
+      const cat=['hw','atm','grand','auc'].includes(pts[1])?pts[1]:'grand';
+      const kw=pts.slice(2).join(' ')||'全班福利';
+      const title=rest[0]?.trim()||kw;
+      const desc=rest[1]?.trim()||'';
+      const rule=rest[2]?.trim()||'';
+      return {icon,cat,kw,title,desc,rule};
+    });
+    localStorage.setItem('hm_cells',JSON.stringify(cells));
+    initGrid();
+    alert('24格獎項更新完成！');
+  } else {
+    alert('請確保填入至少 24 行！');
+  }
+});
+
+// 修改密碼
+document.getElementById('changePwBtn').addEventListener('click',()=>{
+  const oldPw=document.getElementById('oldPwI').value;
+  const newPw=document.getElementById('newPwI').value;
+  const cfmPw=document.getElementById('cfmPwI').value;
+  if(oldPw!==adminPw){ alert('目前密碼錯誤！'); return; }
+  if(!/^\d{4}$/.test(newPw)){ alert('新密碼必須是 4 位數字！'); return; }
+  if(newPw!==cfmPw){ alert('兩次輸入的密碼不一致！'); return; }
+  adminPw=newPw;
+  localStorage.setItem('hm_pw',adminPw);
+  document.getElementById('oldPwI').value='';
+  document.getElementById('newPwI').value='';
+  document.getElementById('cfmPwI').value='';
+  alert('密碼修改成功！');
+});
+
+// 渲染紀錄
+function renderHistory(){
+  const ul=document.getElementById('histList');
+  ul.innerHTML='';
+  if(!history.length){
+    ul.innerHTML='<li style="color:#475569;text-align:center;padding:12px">尚無抽獎紀錄</li>';
+    return;
+  }
+  history.forEach(h=>{
+    const li=document.createElement('li');
+    li.className='hist-item';
+    li.innerHTML=`<div><div class="pname">全班獲得：${h.prize}</div><div class="meta">${h.mode}</div></div><span class="meta">${h.time}</span>`;
+    ul.appendChild(li);
+  });
+}
+
+document.getElementById('clearHistBtn').addEventListener('click',()=>{
+  if(confirm('確定清空所有兌換紀錄？')){
+    history=[];
+    localStorage.setItem('hm_history',JSON.stringify(history));
+    renderHistory();
+  }
+});
+
+// 匯出
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const data={version:'3.0',exportTime:new Date().toISOString(),mode,vaultPts,vaultCost,students,cells,history,pw:adminPw};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`班級榮譽輪盤備份_${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
+  a.click(); URL.revokeObjectURL(url);
+});
+
+// 匯入
+document.getElementById('importFile').addEventListener('change',e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=evt=>{
+    try{
+      const d=JSON.parse(evt.target.result);
+      if(d.students&&d.cells){
+        students=d.students; cells=d.cells;
+        if(d.mode) mode=d.mode;
+        if(d.vaultPts!==undefined) vaultPts=d.vaultPts;
+        if(d.vaultCost!==undefined) vaultCost=d.vaultCost;
+        if(d.history) history=d.history;
+        if(d.pw) { adminPw=d.pw; localStorage.setItem('hm_pw',adminPw); }
+        localStorage.setItem('hm_students',JSON.stringify(students));
+        localStorage.setItem('hm_cells',JSON.stringify(cells));
+        localStorage.setItem('hm_mode',mode);
+        localStorage.setItem('hm_vault_pts',vaultPts);
+        localStorage.setItem('hm_vault_cost',vaultCost);
+        localStorage.setItem('hm_history',JSON.stringify(history));
+        initGrid(); updateView();
+        alert('備份匯入成功！');
+        modal.style.display='none';
+      } else { alert('檔案格式不正確！'); }
+    }catch(err){ alert('讀取失敗，請確認為合法 JSON 檔案。'); }
+  };
+  r.readAsText(file);
+});
+
+/* ── 初始化 ── */
+initGrid();
+updateView();
+</script>
+</body>
+</html>
